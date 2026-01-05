@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MZ 언어 나이 테스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0F1220;
+            --card: #171C2F;
+            --text: #E8EBFF;
+            --muted: #A9B0D9;
+            --line: #2A3055;
+            --accent: #7A8CFF;
+            --success: #4ECCA3;
+            --error: #FF6B6B;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background-color: var(--card);
+            border-radius: 20px;
+            padding: 32px 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--line);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent), #B794F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 28px;
+            font-size: 0.95rem;
+        }
+
+        .question-count-selector {
+            margin-bottom: 28px;
+        }
+
+        .question-count-selector label {
+            display: block;
+            text-align: center;
+            margin-bottom: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .count-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .count-btn {
+            width: 60px;
+            height: 48px;
+            border: 2px solid var(--line);
+            background: transparent;
+            color: var(--text);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .count-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .count-btn:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .count-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0F1220;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--accent), #9BA8FF);
+            border: none;
+            border-radius: 14px;
+            color: #0F1220;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(122, 140, 255, 0.3);
+        }
+
+        .btn-primary:focus {
+            outline: 2px solid var(--text);
+            outline-offset: 2px;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Quiz Screen */
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .progress-text {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: var(--line);
+            border-radius: 3px;
+            margin-left: 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #B794F6);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .question-term {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .question-prompt {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 28px;
+            font-size: 1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px 20px;
+            background: transparent;
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: rgba(122, 140, 255, 0.1);
+        }
+
+        .option-btn:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success);
+            background: rgba(78, 204, 163, 0.15);
+            color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error);
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--error);
+        }
+
+        .option-btn.show-correct {
+            border-color: var(--success);
+            background: rgba(78, 204, 163, 0.1);
+        }
+
+        .btn-next {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 14px;
+            color: #0F1220;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .btn-next.show {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background: #9BA8FF;
+        }
+
+        .btn-next:focus {
+            outline: 2px solid var(--text);
+            outline-offset: 2px;
+        }
+
+        /* Result Screen */
+        .result-age {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .result-age-label {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .result-age-number {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #B794F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .result-age-unit {
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        .result-score {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .result-emoji {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .result-description {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .result-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-share {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #4ECCA3, #6BE4BA);
+            border: none;
+            border-radius: 14px;
+            color: #0F1220;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-share:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-share:focus {
+            outline: 2px solid var(--text);
+            outline-offset: 2px;
+        }
+
+        .btn-retry {
+            width: 100%;
+            padding: 14px 24px;
+            background: transparent;
+            border: 2px solid var(--line);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-retry:hover {
+            border-color: var(--accent);
+            background: rgba(122, 140, 255, 0.1);
+        }
+
+        .btn-retry:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Ad placeholder */
+        .ad-placeholder {
+            width: 100%;
+            max-width: 480px;
+            height: 50px;
+            margin-top: auto;
+            /* Reserved space for future ad - currently invisible */
+        }
+
+        /* Screen visibility */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 360px) {
+            .card {
+                padding: 24px 18px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-term {
+                font-size: 1.7rem;
+            }
+
+            .result-age-number {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen active">
+            <div class="card">
+                <h1>MZ 언어 나이 테스트</h1>
+                <p class="description">
+                    요즘 인터넷 유행어와 신조어를 얼마나 알고 계신가요?<br>
+                    테스트를 통해 당신의 언어 나이를 확인해보세요!
+                </p>
+
+                <div class="question-count-selector">
+                    <label id="countLabel">문항 수를 선택하세요</label>
+                    <div class="count-buttons" role="radiogroup" aria-labelledby="countLabel">
+                        <button class="count-btn" data-count="8" role="radio" aria-checked="false" aria-label="8문항">8</button>
+                        <button class="count-btn selected" data-count="9" role="radio" aria-checked="true" aria-label="9문항">9</button>
+                        <button class="count-btn" data-count="10" role="radio" aria-checked="false" aria-label="10문항">10</button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="startBtn" aria-label="테스트 시작">테스트 시작</button>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="screen">
+            <div class="card">
+                <div class="progress-bar">
+                    <span class="progress-text" id="progressText">1/10</span>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <div class="question-term" id="questionTerm">손절미</div>
+                <p class="question-prompt">이 단어의 뜻은?</p>
+
+                <div class="options" id="optionsContainer" role="group" aria-label="보기">
+                    <!-- Options will be inserted here -->
+                </div>
+
+                <button class="btn-next" id="nextBtn" aria-label="다음 문항">다음</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="screen">
+            <div class="card">
+                <div class="result-age">
+                    <p class="result-age-label">당신의 언어 나이는</p>
+                    <span class="result-age-number" id="resultAge">25</span>
+                    <span class="result-age-unit">세</span>
+                </div>
+
+                <p class="result-score" id="resultScore">정답: 7/10</p>
+
+                <div class="result-emoji" id="resultEmoji">🏆</div>
+                <p class="result-title" id="resultTitle">결과 문구</p>
+                <p class="result-description" id="resultDescription">상세 설명</p>
+
+                <div class="result-buttons">
+                    <button class="btn-share" id="shareBtn" aria-label="결과 공유하기">📤 결과 공유하기</button>
+                    <button class="btn-retry" id="retryBtn" aria-label="다시하기 (새 문항)">🔄 다시하기 (새 문항)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ad placeholder (reserved for future use) -->
+    <div class="ad-placeholder" aria-hidden="true"></div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script>
+        // Question Pool
+        const QUESTION_POOL = [
+            { term: "손절미", meaning: "손절하고 싶어지는 특징/사람 (예: 매일 지각하는 사람)" },
+            { term: "위쑤시개", meaning: "스트레스를 받을 때 먹는 매운 음식" },
+            { term: "일세스코", meaning: "일은 안 하고 남의 일까지 떠넘기는 사람" },
+            { term: "갓생", meaning: "부지런하고 성실하게 사는 삶('God + 생')" },
+            { term: "캘박", meaning: "캘린더 박제(일정을 캘린더에 확실히 기록/고정)" },
+            { term: "킹리적 갓심", meaning: "합리적 의심('킹'+'갓'으로 과장)" },
+            { term: "쇼믈리에", meaning: "잘 모르면서 아는 척하는 사람" },
+            { term: "막나귀", meaning: "막상 나가려니까 귀찮다는 뜻" },
+            { term: "포청천", meaning: "연애와 결혼을 포기하는 청년" },
+            { term: "가면비", meaning: "비싼 가격이어도 직원의 얼굴을 보면 만족스러운 가격 대비 만족도" },
+            { term: "코스트코 크루", meaning: "코스트코 대용량 제품을 함께 소비하는 동호회" },
+            { term: "테무인간", meaning: "특정 상황이나 행동을 빗댄 신조어(초저가/대체 소비 성향 맥락)" },
+            { term: "밥플릭스", meaning: "밥 먹으며 영상 콘텐츠를 보는 습관/행동" },
+            { term: "수발새끼", meaning: "특정 상황이나 행동을 빗댄 신조어(표현이 거칠 수 있음)" },
+            { term: "종로플예", meaning: "종이 빨대, 노 플라스틱 빨대, 예스 (친환경 빨대 지향)" },
+            { term: "저메추", meaning: "저녁 메뉴 추천" },
+            { term: "웃안웃", meaning: "웃긴데 안 웃김" },
+            { term: "스불재", meaning: "스스로 불러온 재앙" },
+            { term: "농협은행", meaning: "너무 예쁘다 (유래된 썰이 있음)" }
+        ];
+
+        // Result tiers
+        const RESULT_TIERS = [
+            {
+                minRate: 90,
+                maxRate: 100,
+                minAge: 18,
+                maxAge: 22,
+                emoji: "🏆",
+                title: "혹시 05년생이세요? 거의 '현지인' 수준의 소통 능력!",
+                description: "손절미부터 농협은행까지, 당신은 이미 밈의 파도 위를 걷고 있군요. MZ 세대와 대화할 때 통역사가 필요 없는 이 구역의 인싸입니다."
+            },
+            {
+                minRate: 70,
+                maxRate: 89,
+                minAge: 23,
+                maxAge: 32,
+                emoji: "🥈",
+                title: "트렌드에 민감한 얼리어답터! 웬만한 대화는 막힘없네요.",
+                description: "신조어 사용이 아주 자연스러워요. 직장이나 모임에서 '요즘 애들' 말을 찰떡같이 알아듣고 계시군요. 갓생 살 준비가 완벽히 되셨습니다!"
+            },
+            {
+                minRate: 50,
+                maxRate: 69,
+                minAge: 33,
+                maxAge: 44,
+                emoji: "🥉",
+                title: "아는 만큼 보인다! 딱 적당하게 유행을 즐기는 중.",
+                description: "몇몇 단어는 아리송하지만, 대세는 놓치지 않고 있네요. 밥플릭스 하면서 저메추 받는 평범한 현대인의 소양을 충분히 갖추셨습니다."
+            },
+            {
+                minRate: 30,
+                maxRate: 49,
+                minAge: 45,
+                maxAge: 54,
+                emoji: "💡",
+                title: "조금은 낯설지만 괜찮아요. 이제 하나씩 알아가는 재미!",
+                description: "신조어는 외계어 같지만, 맥락으로 파악하는 눈치는 백단이시군요! '스불재' 같은 상황만 피하신다면 소통에는 문제없을 거예요."
+            },
+            {
+                minRate: 0,
+                maxRate: 29,
+                minAge: 55,
+                maxAge: 60,
+                emoji: "🍷",
+                title: "신조어는 거들 뿐, 인생의 관록은 이미 만렙!",
+                description: "밈은 몰라도 인생은 압니다. 유행어에 일희일비하지 않는 당신이 진정한 갓생러! 인생은 60부터, 이제부터 하나씩 배워보면 되죠."
+            }
+        ];
+
+        // Game state
+        let questionCount = 9;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let answered = false;
+
+        // DOM Elements
+        const startScreen = document.getElementById('startScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const startBtn = document.getElementById('startBtn');
+        const countBtns = document.querySelectorAll('.count-btn');
+        const progressText = document.getElementById('progressText');
+        const progressFill = document.getElementById('progressFill');
+        const questionTerm = document.getElementById('questionTerm');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultAge = document.getElementById('resultAge');
+        const resultScore = document.getElementById('resultScore');
+        const resultEmoji = document.getElementById('resultEmoji');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultDescription = document.getElementById('resultDescription');
+        const shareBtn = document.getElementById('shareBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const toast = document.getElementById('toast');
+
+        // Utility functions
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function showScreen(screen) {
+            startScreen.classList.remove('active');
+            quizScreen.classList.remove('active');
+            resultScreen.classList.remove('active');
+            screen.classList.add('active');
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Event listeners for question count selection
+        countBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                countBtns.forEach(b => {
+                    b.classList.remove('selected');
+                    b.setAttribute('aria-checked', 'false');
+                });
+                btn.classList.add('selected');
+                btn.setAttribute('aria-checked', 'true');
+                questionCount = parseInt(btn.dataset.count);
+            });
+        });
+
+        // Start game
+        startBtn.addEventListener('click', () => {
+            startGame();
+        });
+
+        function startGame() {
+            // Reset state
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            answered = false;
+
+            // Select random questions
+            currentQuestions = shuffleArray(QUESTION_POOL).slice(0, questionCount);
+
+            // Show quiz screen
+            showScreen(quizScreen);
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+
+            // Update progress
+            progressText.textContent = `${currentQuestionIndex + 1}/${questionCount}`;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / questionCount) * 100}%`;
+
+            // Display term
+            questionTerm.textContent = question.term;
+
+            // Generate options
+            const correctAnswer = question.meaning;
+            const wrongAnswers = shuffleArray(
+                QUESTION_POOL
+                    .filter(q => q.meaning !== correctAnswer)
+                    .map(q => q.meaning)
+            ).slice(0, 2);
+
+            const options = shuffleArray([correctAnswer, ...wrongAnswers]);
+
+            // Clear and populate options
+            optionsContainer.innerHTML = '';
+            options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.setAttribute('aria-label', `보기 ${index + 1}: ${option}`);
+                btn.dataset.correct = option === correctAnswer;
+                btn.addEventListener('click', () => selectOption(btn, option === correctAnswer));
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reset state
+            answered = false;
+            nextBtn.classList.remove('show');
+        }
+
+        function selectOption(selectedBtn, isCorrect) {
+            if (answered) return;
+            answered = true;
+
+            // Disable all options
+            const allOptions = optionsContainer.querySelectorAll('.option-btn');
+            allOptions.forEach(btn => {
+                btn.disabled = true;
+                if (btn.dataset.correct === 'true') {
+                    btn.classList.add('show-correct');
+                }
+            });
+
+            // Mark selected option
+            if (isCorrect) {
+                selectedBtn.classList.remove('show-correct');
+                selectedBtn.classList.add('correct');
+                correctAnswers++;
+            } else {
+                selectedBtn.classList.add('incorrect');
+            }
+
+            // Show next button
+            nextBtn.classList.add('show');
+            nextBtn.textContent = currentQuestionIndex === questionCount - 1 ? '결과 보기' : '다음';
+        }
+
+        // Next button
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= questionCount) {
+                showResult();
+            } else {
+                displayQuestion();
+            }
+        });
+
+        function showResult() {
+            // Calculate rate
+            const rate = (correctAnswers / questionCount) * 100;
+
+            // Find tier
+            const tier = RESULT_TIERS.find(t => rate >= t.minRate && rate <= t.maxRate) || RESULT_TIERS[RESULT_TIERS.length - 1];
+
+            // Calculate age within tier range
+            let age;
+            if (rate >= tier.minRate && rate <= tier.maxRate) {
+                const tierRateRange = tier.maxRate - tier.minRate;
+                const tierAgeRange = tier.maxAge - tier.minAge;
+                const ratePosition = (tier.maxRate - rate) / tierRateRange;
+                age = Math.round(tier.minAge + (ratePosition * tierAgeRange));
+            } else {
+                age = tier.minAge;
+            }
+
+            // Clamp age
+            age = Math.max(tier.minAge, Math.min(tier.maxAge, age));
+
+            // Update result screen
+            resultAge.textContent = age;
+            resultScore.textContent = `정답: ${correctAnswers}/${questionCount}`;
+            resultEmoji.textContent = tier.emoji;
+            resultTitle.textContent = tier.title;
+            resultDescription.textContent = tier.description;
+
+            showScreen(resultScreen);
+        }
+
+        // Share button
+        shareBtn.addEventListener('click', async () => {
+            const age = resultAge.textContent;
+            const shareText = `[신조어 나이 테스트 결과] 내 언어 나이는… ${age}세 😎 갓생 살기 참 힘들다 그치? 당신의 언어 점수는 ${correctAnswers}/${questionCount}점! 지금 바로 확인해봐! #신조어테스트 #언어나이 #MZ능력시험 #갓생러`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'MZ 언어 나이 테스트',
+                        text: shareText
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        copyToClipboard(shareText);
+                    }
+                }
+            } else {
+                copyToClipboard(shareText);
+            }
+        });
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('📋 결과가 클립보드에 복사되었습니다!');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('📋 결과가 클립보드에 복사되었습니다!');
+            } catch (err) {
+                showToast('복사에 실패했습니다.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Retry button
+        retryBtn.addEventListener('click', () => {
+            showScreen(startScreen);
+        });
+    </script>
+</body>
+</html>
