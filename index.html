@@ -13,14 +13,16 @@
         }
 
         :root {
-            --bg: #0F1220;
-            --card: #171C2F;
-            --text: #E8EBFF;
-            --muted: #A9B0D9;
-            --line: #2A3055;
-            --accent: #7A8CFF;
-            --success: #4ECCA3;
-            --error: #FF6B6B;
+            /* Y2K 레트로 펀치 컬러 팔레트 */
+            --bg: #F0F4FF;
+            --card: #FFFFFF;
+            --primary: #FF3D00;
+            --secondary: #00E676;
+            --accent: #2979FF;
+            --text: #1A1A1B;
+            --text-muted: #555555;
+            --border: #1A1A1B;
+            --error: #FF3D00;
         }
 
         html, body {
@@ -53,55 +55,57 @@
 
         .card {
             background-color: var(--card);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 28px 20px;
             margin-bottom: 16px;
-            border: 1px solid var(--line);
+            border: 3px solid var(--border);
+            box-shadow: 6px 6px 0px var(--border);
         }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             text-align: center;
             margin-bottom: 16px;
-            background: linear-gradient(135deg, var(--accent), #B794F6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary);
+            font-weight: 800;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
         .description {
             text-align: center;
-            color: var(--muted);
+            color: var(--text-muted);
             margin-bottom: 32px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.7;
         }
 
         .btn-primary {
             width: 100%;
             padding: 18px 24px;
-            background: linear-gradient(135deg, var(--accent), #9BA8FF);
-            border: none;
-            border-radius: 14px;
-            color: #0F1220;
-            font-size: 1.1rem;
+            background: var(--primary);
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            color: #FFFFFF;
+            font-size: 1.15rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             touch-action: manipulation;
+            box-shadow: 4px 4px 0px var(--border);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(122, 140, 255, 0.3);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--border);
         }
 
         .btn-primary:active {
-            transform: translateY(0);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--border);
         }
 
         .btn-primary:focus {
-            outline: 2px solid var(--text);
+            outline: 3px solid var(--accent);
             outline-offset: 2px;
         }
 
@@ -114,24 +118,25 @@
         }
 
         .progress-text {
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 700;
             min-width: 40px;
         }
 
         .progress-track {
             flex: 1;
-            height: 8px;
-            background: var(--line);
-            border-radius: 4px;
+            height: 12px;
+            background: #E0E0E0;
+            border-radius: 6px;
             margin-left: 12px;
             overflow: hidden;
+            border: 2px solid var(--border);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), #B794F6);
+            background: var(--secondary);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -139,49 +144,54 @@
         .question-term {
             text-align: center;
             font-size: 2.2rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 8px;
-            color: var(--accent);
+            color: var(--primary);
             word-break: keep-all;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.08);
         }
 
         .question-prompt {
             text-align: center;
-            color: var(--muted);
+            color: var(--text-muted);
             margin-bottom: 24px;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         .option-btn {
             width: 100%;
             padding: 14px 16px;
-            background: transparent;
-            border: 2px solid var(--line);
-            border-radius: 12px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
             color: var(--text);
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             touch-action: manipulation;
             line-height: 1.5;
             word-break: keep-all;
+            box-shadow: 3px 3px 0px var(--border);
         }
 
         .option-btn:hover:not(:disabled) {
             border-color: var(--accent);
-            background: rgba(122, 140, 255, 0.1);
+            background: #E3F2FD;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px var(--border);
         }
 
         .option-btn:active:not(:disabled) {
-            transform: scale(0.98);
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0px var(--border);
         }
 
         .option-btn:focus {
@@ -194,35 +204,38 @@
         }
 
         .option-btn.correct {
-            border-color: var(--success);
-            background: rgba(78, 204, 163, 0.15);
-            color: var(--success);
+            border-color: var(--secondary);
+            background: #E8F5E9;
+            color: #1B5E20;
+            box-shadow: 3px 3px 0px #1B5E20;
         }
 
         .option-btn.incorrect {
             border-color: var(--error);
-            background: rgba(255, 107, 107, 0.15);
-            color: var(--error);
+            background: #FFEBEE;
+            color: #B71C1C;
+            box-shadow: 3px 3px 0px #B71C1C;
         }
 
         .option-btn.show-correct {
-            border-color: var(--success);
-            background: rgba(78, 204, 163, 0.1);
+            border-color: var(--secondary);
+            background: #E8F5E9;
         }
 
         .btn-next {
             width: 100%;
             padding: 16px 24px;
             background: var(--accent);
-            border: none;
-            border-radius: 14px;
-            color: #0F1220;
-            font-size: 1rem;
-            font-weight: 600;
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            color: #FFFFFF;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             display: none;
             touch-action: manipulation;
+            box-shadow: 4px 4px 0px var(--border);
         }
 
         .btn-next.show {
@@ -230,15 +243,17 @@
         }
 
         .btn-next:hover {
-            background: #9BA8FF;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--border);
         }
 
         .btn-next:active {
-            transform: scale(0.98);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--border);
         }
 
         .btn-next:focus {
-            outline: 2px solid var(--text);
+            outline: 3px solid var(--primary);
             outline-offset: 2px;
         }
 
@@ -249,43 +264,43 @@
         }
 
         .result-age-label {
-            font-size: 0.95rem;
-            color: var(--muted);
+            font-size: 1rem;
+            color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .result-age-number {
-            font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #B794F6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: var(--primary);
             line-height: 1.1;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
         }
 
         .result-age-unit {
-            font-size: 1.3rem;
-            color: var(--muted);
+            font-size: 1.5rem;
+            color: var(--text);
+            font-weight: 700;
         }
 
         .result-score {
             text-align: center;
-            color: var(--muted);
-            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
             margin-bottom: 20px;
+            font-weight: 600;
         }
 
         .result-emoji {
             text-align: center;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 12px;
         }
 
         .result-title {
             text-align: center;
-            font-size: 1.05rem;
-            font-weight: 600;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: var(--text);
             margin-bottom: 14px;
             line-height: 1.5;
@@ -294,8 +309,8 @@
 
         .result-description {
             text-align: center;
-            color: var(--muted);
-            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
             line-height: 1.7;
             margin-bottom: 24px;
             word-break: keep-all;
@@ -304,62 +319,67 @@
         .result-buttons {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .btn-share {
             width: 100%;
             padding: 16px 24px;
-            background: linear-gradient(135deg, #4ECCA3, #6BE4BA);
-            border: none;
-            border-radius: 14px;
-            color: #0F1220;
-            font-size: 1rem;
-            font-weight: 600;
+            background: var(--secondary);
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            color: var(--border);
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             touch-action: manipulation;
+            box-shadow: 4px 4px 0px var(--border);
         }
 
         .btn-share:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(78, 204, 163, 0.3);
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--border);
         }
 
         .btn-share:active {
-            transform: translateY(0);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--border);
         }
 
         .btn-share:focus {
-            outline: 2px solid var(--text);
+            outline: 3px solid var(--accent);
             outline-offset: 2px;
         }
 
         .btn-retry {
             width: 100%;
             padding: 16px 24px;
-            background: transparent;
-            border: 2px solid var(--line);
-            border-radius: 14px;
+            background: var(--card);
+            border: 3px solid var(--border);
+            border-radius: 12px;
             color: var(--text);
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             touch-action: manipulation;
+            box-shadow: 4px 4px 0px var(--border);
         }
 
         .btn-retry:hover {
-            border-color: var(--accent);
-            background: rgba(122, 140, 255, 0.1);
+            background: #F5F5F5;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--border);
         }
 
         .btn-retry:active {
-            transform: scale(0.98);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--border);
         }
 
         .btn-retry:focus {
-            outline: 2px solid var(--accent);
+            outline: 3px solid var(--accent);
             outline-offset: 2px;
         }
 
@@ -370,16 +390,18 @@
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--card);
-            border: 1px solid var(--success);
-            color: var(--success);
+            border: 2px solid var(--secondary);
+            color: #1B5E20;
             padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
             max-width: 90%;
             text-align: center;
+            box-shadow: 3px 3px 0px var(--border);
         }
 
         .toast.show {
@@ -412,11 +434,12 @@
 
             .card {
                 padding: 24px 16px;
-                border-radius: 16px;
+                border-radius: 14px;
+                box-shadow: 5px 5px 0px var(--border);
             }
 
             h1 {
-                font-size: 1.4rem;
+                font-size: 1.5rem;
             }
 
             .question-term {
@@ -425,19 +448,19 @@
 
             .option-btn {
                 padding: 12px 14px;
-                font-size: 0.85rem;
+                font-size: 0.87rem;
             }
 
             .result-age-number {
-                font-size: 3.5rem;
+                font-size: 3.8rem;
             }
 
             .result-title {
-                font-size: 0.95rem;
+                font-size: 1rem;
             }
 
             .result-description {
-                font-size: 0.82rem;
+                font-size: 0.85rem;
             }
         }
 
@@ -448,7 +471,7 @@
             }
 
             .result-age-number {
-                font-size: 3rem;
+                font-size: 3.2rem;
             }
         }
 
@@ -468,7 +491,7 @@
             }
 
             .options {
-                gap: 6px;
+                gap: 8px;
             }
 
             .option-btn {
