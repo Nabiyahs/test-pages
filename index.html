@@ -2,13 +2,14 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MZ 언어 나이 테스트</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -22,21 +23,29 @@
             --error: #FF6B6B;
         }
 
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
+            padding-top: env(safe-area-inset-top, 16px);
+            padding-bottom: env(safe-area-inset-bottom, 16px);
             line-height: 1.6;
         }
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 420px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -45,13 +54,13 @@
         .card {
             background-color: var(--card);
             border-radius: 20px;
-            padding: 32px 24px;
-            margin-bottom: 20px;
+            padding: 28px 20px;
+            margin-bottom: 16px;
             border: 1px solid var(--line);
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             text-align: center;
             margin-bottom: 16px;
             background: linear-gradient(135deg, var(--accent), #B794F6);
@@ -63,59 +72,14 @@
         .description {
             text-align: center;
             color: var(--muted);
-            margin-bottom: 28px;
-            font-size: 0.95rem;
-        }
-
-        .question-count-selector {
-            margin-bottom: 28px;
-        }
-
-        .question-count-selector label {
-            display: block;
-            text-align: center;
-            margin-bottom: 12px;
-            color: var(--muted);
+            margin-bottom: 32px;
             font-size: 0.9rem;
-        }
-
-        .count-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .count-btn {
-            width: 60px;
-            height: 48px;
-            border: 2px solid var(--line);
-            background: transparent;
-            color: var(--text);
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .count-btn:hover {
-            border-color: var(--accent);
-        }
-
-        .count-btn:focus {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .count-btn.selected {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #0F1220;
+            line-height: 1.7;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 16px 24px;
+            padding: 18px 24px;
             background: linear-gradient(135deg, var(--accent), #9BA8FF);
             border: none;
             border-radius: 14px;
@@ -124,6 +88,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
+            touch-action: manipulation;
         }
 
         .btn-primary:hover {
@@ -131,16 +96,13 @@
             box-shadow: 0 8px 24px rgba(122, 140, 255, 0.3);
         }
 
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
         .btn-primary:focus {
             outline: 2px solid var(--text);
             outline-offset: 2px;
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
 
         /* Quiz Screen */
@@ -154,62 +116,72 @@
         .progress-text {
             color: var(--muted);
             font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 40px;
         }
 
         .progress-track {
             flex: 1;
-            height: 6px;
+            height: 8px;
             background: var(--line);
-            border-radius: 3px;
-            margin-left: 16px;
+            border-radius: 4px;
+            margin-left: 12px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--accent), #B794F6);
-            border-radius: 3px;
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
         .question-term {
             text-align: center;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 8px;
             color: var(--accent);
+            word-break: keep-all;
         }
 
         .question-prompt {
             text-align: center;
             color: var(--muted);
-            margin-bottom: 28px;
-            font-size: 1rem;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .option-btn {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 16px;
             background: transparent;
             border: 2px solid var(--line);
-            border-radius: 14px;
+            border-radius: 12px;
             color: var(--text);
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
+            touch-action: manipulation;
+            line-height: 1.5;
+            word-break: keep-all;
         }
 
         .option-btn:hover:not(:disabled) {
             border-color: var(--accent);
             background: rgba(122, 140, 255, 0.1);
+        }
+
+        .option-btn:active:not(:disabled) {
+            transform: scale(0.98);
         }
 
         .option-btn:focus {
@@ -240,7 +212,7 @@
 
         .btn-next {
             width: 100%;
-            padding: 14px 24px;
+            padding: 16px 24px;
             background: var(--accent);
             border: none;
             border-radius: 14px;
@@ -250,6 +222,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             display: none;
+            touch-action: manipulation;
         }
 
         .btn-next.show {
@@ -260,6 +233,10 @@
             background: #9BA8FF;
         }
 
+        .btn-next:active {
+            transform: scale(0.98);
+        }
+
         .btn-next:focus {
             outline: 2px solid var(--text);
             outline-offset: 2px;
@@ -268,17 +245,17 @@
         /* Result Screen */
         .result-age {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .result-age-label {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--muted);
             margin-bottom: 8px;
         }
 
         .result-age-number {
-            font-size: 4.5rem;
+            font-size: 4rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--accent), #B794F6);
             -webkit-background-clip: text;
@@ -288,49 +265,51 @@
         }
 
         .result-age-unit {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--muted);
         }
 
         .result-score {
             text-align: center;
             color: var(--muted);
-            font-size: 0.95rem;
-            margin-bottom: 24px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
         }
 
         .result-emoji {
             text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 16px;
+            font-size: 2.2rem;
+            margin-bottom: 12px;
         }
 
         .result-title {
             text-align: center;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: var(--text);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             line-height: 1.5;
+            word-break: keep-all;
         }
 
         .result-description {
             text-align: center;
             color: var(--muted);
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             line-height: 1.7;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
+            word-break: keep-all;
         }
 
         .result-buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn-share {
             width: 100%;
-            padding: 14px 24px;
+            padding: 16px 24px;
             background: linear-gradient(135deg, #4ECCA3, #6BE4BA);
             border: none;
             border-radius: 14px;
@@ -339,11 +318,16 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            touch-action: manipulation;
         }
 
         .btn-share:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(78, 204, 163, 0.3);
+        }
+
+        .btn-share:active {
+            transform: translateY(0);
         }
 
         .btn-share:focus {
@@ -353,7 +337,7 @@
 
         .btn-retry {
             width: 100%;
-            padding: 14px 24px;
+            padding: 16px 24px;
             background: transparent;
             border: 2px solid var(--line);
             border-radius: 14px;
@@ -362,11 +346,16 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            touch-action: manipulation;
         }
 
         .btn-retry:hover {
             border-color: var(--accent);
             background: rgba(122, 140, 255, 0.1);
+        }
+
+        .btn-retry:active {
+            transform: scale(0.98);
         }
 
         .btn-retry:focus {
@@ -377,18 +366,20 @@
         /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--card);
             border: 1px solid var(--success);
             color: var(--success);
-            padding: 12px 24px;
+            padding: 12px 20px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
+            max-width: 90%;
+            text-align: center;
         }
 
         .toast.show {
@@ -399,10 +390,9 @@
         /* Ad placeholder */
         .ad-placeholder {
             width: 100%;
-            max-width: 480px;
+            max-width: 420px;
             height: 50px;
             margin-top: auto;
-            /* Reserved space for future ad - currently invisible */
         }
 
         /* Screen visibility */
@@ -414,22 +404,75 @@
             display: block;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 360px) {
+        /* Small mobile adjustments */
+        @media (max-width: 380px) {
+            body {
+                padding: 12px;
+            }
+
             .card {
-                padding: 24px 18px;
+                padding: 24px 16px;
+                border-radius: 16px;
             }
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
             }
 
             .question-term {
-                font-size: 1.7rem;
+                font-size: 1.8rem;
+            }
+
+            .option-btn {
+                padding: 12px 14px;
+                font-size: 0.85rem;
             }
 
             .result-age-number {
                 font-size: 3.5rem;
+            }
+
+            .result-title {
+                font-size: 0.95rem;
+            }
+
+            .result-description {
+                font-size: 0.82rem;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 320px) {
+            .question-term {
+                font-size: 1.5rem;
+            }
+
+            .result-age-number {
+                font-size: 3rem;
+            }
+        }
+
+        /* Landscape mode on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .card {
+                padding: 16px;
+            }
+
+            .question-term {
+                font-size: 1.5rem;
+                margin-bottom: 4px;
+            }
+
+            .question-prompt {
+                margin-bottom: 12px;
+            }
+
+            .options {
+                gap: 6px;
+            }
+
+            .option-btn {
+                padding: 10px 12px;
             }
         }
     </style>
@@ -441,18 +484,11 @@
             <div class="card">
                 <h1>MZ 언어 나이 테스트</h1>
                 <p class="description">
-                    요즘 인터넷 유행어와 신조어를 얼마나 알고 계신가요?<br>
-                    테스트를 통해 당신의 언어 나이를 확인해보세요!
+                    요즘 인터넷 유행어와 신조어를<br>
+                    얼마나 알고 계신가요?<br><br>
+                    8문항 테스트로<br>
+                    당신의 언어 나이를 확인해보세요!
                 </p>
-
-                <div class="question-count-selector">
-                    <label id="countLabel">문항 수를 선택하세요</label>
-                    <div class="count-buttons" role="radiogroup" aria-labelledby="countLabel">
-                        <button class="count-btn" data-count="8" role="radio" aria-checked="false" aria-label="8문항">8</button>
-                        <button class="count-btn selected" data-count="9" role="radio" aria-checked="true" aria-label="9문항">9</button>
-                        <button class="count-btn" data-count="10" role="radio" aria-checked="false" aria-label="10문항">10</button>
-                    </div>
-                </div>
 
                 <button class="btn-primary" id="startBtn" aria-label="테스트 시작">테스트 시작</button>
             </div>
@@ -462,9 +498,9 @@
         <div id="quizScreen" class="screen">
             <div class="card">
                 <div class="progress-bar">
-                    <span class="progress-text" id="progressText">1/10</span>
+                    <span class="progress-text" id="progressText">1/8</span>
                     <div class="progress-track">
-                        <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+                        <div class="progress-fill" id="progressFill" style="width: 12.5%"></div>
                     </div>
                 </div>
 
@@ -472,7 +508,6 @@
                 <p class="question-prompt">이 단어의 뜻은?</p>
 
                 <div class="options" id="optionsContainer" role="group" aria-label="보기">
-                    <!-- Options will be inserted here -->
                 </div>
 
                 <button class="btn-next" id="nextBtn" aria-label="다음 문항">다음</button>
@@ -488,7 +523,7 @@
                     <span class="result-age-unit">세</span>
                 </div>
 
-                <p class="result-score" id="resultScore">정답: 7/10</p>
+                <p class="result-score" id="resultScore">정답: 6/8</p>
 
                 <div class="result-emoji" id="resultEmoji">🏆</div>
                 <p class="result-title" id="resultTitle">결과 문구</p>
@@ -496,7 +531,7 @@
 
                 <div class="result-buttons">
                     <button class="btn-share" id="shareBtn" aria-label="결과 공유하기">📤 결과 공유하기</button>
-                    <button class="btn-retry" id="retryBtn" aria-label="다시하기 (새 문항)">🔄 다시하기 (새 문항)</button>
+                    <button class="btn-retry" id="retryBtn" aria-label="다시하기">🔄 다시하기</button>
                 </div>
             </div>
         </div>
@@ -509,27 +544,122 @@
     <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 
     <script>
-        // Question Pool
+        // Question Pool with predefined options
         const QUESTION_POOL = [
-            { term: "손절미", meaning: "손절하고 싶어지는 특징/사람 (예: 매일 지각하는 사람)" },
-            { term: "위쑤시개", meaning: "스트레스를 받을 때 먹는 매운 음식" },
-            { term: "일세스코", meaning: "일은 안 하고 남의 일까지 떠넘기는 사람" },
-            { term: "갓생", meaning: "부지런하고 성실하게 사는 삶('God + 생')" },
-            { term: "캘박", meaning: "캘린더 박제(일정을 캘린더에 확실히 기록/고정)" },
-            { term: "킹리적 갓심", meaning: "합리적 의심('킹'+'갓'으로 과장)" },
-            { term: "쇼믈리에", meaning: "잘 모르면서 아는 척하는 사람" },
-            { term: "막나귀", meaning: "막상 나가려니까 귀찮다는 뜻" },
-            { term: "포청천", meaning: "연애와 결혼을 포기하는 청년" },
-            { term: "가면비", meaning: "비싼 가격이어도 직원의 얼굴을 보면 만족스러운 가격 대비 만족도" },
-            { term: "코스트코 크루", meaning: "코스트코 대용량 제품을 함께 소비하는 동호회" },
-            { term: "테무인간", meaning: "특정 상황이나 행동을 빗댄 신조어(초저가/대체 소비 성향 맥락)" },
-            { term: "밥플릭스", meaning: "밥 먹으며 영상 콘텐츠를 보는 습관/행동" },
-            { term: "수발새끼", meaning: "특정 상황이나 행동을 빗댄 신조어(표현이 거칠 수 있음)" },
-            { term: "종로플예", meaning: "종이 빨대, 노 플라스틱 빨대, 예스 (친환경 빨대 지향)" },
-            { term: "저메추", meaning: "저녁 메뉴 추천" },
-            { term: "웃안웃", meaning: "웃긴데 안 웃김" },
-            { term: "스불재", meaning: "스스로 불러온 재앙" },
-            { term: "농협은행", meaning: "너무 예쁘다 (유래된 썰이 있음)" }
+            {
+                term: "손절미",
+                correct: "손절하고 싶어지는 특징이나 사람",
+                wrong1: "인절미처럼 찰떡같이 붙어 다니는 단짝 친구",
+                wrong2: "손재주가 좋아 무엇이든 금방 만드는 사람"
+            },
+            {
+                term: "위쑤시개",
+                correct: "스트레스 받을 때 찾는 아주 매운 음식",
+                wrong1: "식사 후 습관적으로 사용하는 이쑤시개의 은어",
+                wrong2: "위장을 찌르는 듯한 극심한 배고픔"
+            },
+            {
+                term: "일세스코",
+                correct: "본인은 일 안 하고 남에게 떠넘기는 사람",
+                wrong1: "회사 내의 모든 업무 문제를 해결하는 능력자",
+                wrong2: "사무실 청결과 방역을 담당하는 사내 동호회"
+            },
+            {
+                term: "갓생",
+                correct: "부지런하고 생산적으로 사는 성실한 삶",
+                wrong1: "신(God)이 내린 것처럼 운이 좋은 인생",
+                wrong2: "갓 태어난 아기처럼 순수하게 즐기는 삶"
+            },
+            {
+                term: "캘박",
+                correct: "중요한 일정을 캘린더에 기록함",
+                wrong1: "캘리포니아 스타일의 숙박 시설",
+                wrong2: "캘리그래피로 예쁘게 작성한 방명록"
+            },
+            {
+                term: "킹리적 갓심",
+                correct: "확실하고 합리적인 의심",
+                wrong1: "왕이 느끼는 지독한 외로움과 고독",
+                wrong2: "게임에서 이겼을 때 느끼는 압도적인 승리감"
+            },
+            {
+                term: "쇼믈리에",
+                correct: "잘 모르면서 아는 척 설명하려 드는 사람",
+                wrong1: "백화점에서 쇼핑 동선을 짜주는 전문 가이드",
+                wrong2: "재미있는 쇼(공연)만 골라 보는 문화 마니아"
+            },
+            {
+                term: "막나귀",
+                correct: "막상 나가려고 하니 귀찮아짐",
+                wrong1: "막다른 길에서 마주친 당나귀",
+                wrong2: "막걸리를 마시고 나니 기분이 좋아짐"
+            },
+            {
+                term: "포청천",
+                correct: "연애와 결혼을 포기한 청년",
+                wrong1: "판결을 공정하게 내리는 정의로운 사람",
+                wrong2: "포기하지 않고 청춘을 즐기는 중장년층"
+            },
+            {
+                term: "가면비",
+                correct: "직원의 태도나 외모를 포함한 가격 대비 만족도",
+                wrong1: "가면을 쓰고 진행하는 비대면 미팅 비용",
+                wrong2: "가을 면접을 준비하기 위해 지출하는 비용"
+            },
+            {
+                term: "코스트코 크루",
+                correct: "대용량 상품을 함께 사서 나누는 모임",
+                wrong1: "창고형 마트에서 근무하는 정직원 팀",
+                wrong2: "매주 특정 마트에서만 장을 보는 쇼핑 마니아"
+            },
+            {
+                term: "테무인간",
+                correct: "초저가 가성비 상품 위주로 소비하는 사람",
+                wrong1: "테니스와 무술에 능한 운동 마니아",
+                wrong2: "테크놀로지에 무지한 아날로그 지향 인간"
+            },
+            {
+                term: "밥플릭스",
+                correct: "밥 먹으면서 영상을 보는 습관",
+                wrong1: "밥을 먹으면서 하는 가벼운 근력 운동",
+                wrong2: "전 세계의 유명한 맛집을 소개하는 다큐멘터리"
+            },
+            {
+                term: "수발새끼",
+                correct: "남이 다 챙겨주길 당연하게 여기는 사람",
+                wrong1: "수영과 발레를 동시에 배우는 예체능 유망주",
+                wrong2: "부모님을 극진히 모시는 효심 깊은 자녀"
+            },
+            {
+                term: "종로플예",
+                correct: "종이 빨대처럼 친환경 제품을 지향하는 성향",
+                wrong1: "종로에서 플라잉 요가를 예약하는 것",
+                wrong2: "종일 도로 위에서 플렉스를 즐기는 것"
+            },
+            {
+                term: "저메추",
+                correct: "저녁 메뉴 추천",
+                wrong1: "저질 체력을 극복하기 위한 영양제 추가",
+                wrong2: "저축 금액을 매달 조금씩 늘리는 습관"
+            },
+            {
+                term: "웃안웃",
+                correct: "웃기긴 한데 처지가 슬퍼서 못 웃음",
+                wrong1: "웃음이 안 멈춰서 계속 웃음",
+                wrong2: "웃기지도 않아서 전혀 안 웃음"
+            },
+            {
+                term: "스불재",
+                correct: "스스로 불러온 재앙",
+                wrong1: "스포츠를 불나게 열심히 하는 재능",
+                wrong2: "스마트폰 사용을 불허하는 재수생 캠프"
+            },
+            {
+                term: "농협은행",
+                correct: "너무 예쁘다는 뜻의 감탄 표현",
+                wrong1: "농담이 아니고 진짜 행복하다는 뜻",
+                wrong2: "농협에서 운영하는 금융 영업점"
+            }
         ];
 
         // Result tiers
@@ -581,8 +711,8 @@
             }
         ];
 
-        // Game state
-        let questionCount = 9;
+        // Game state - fixed to 8 questions
+        const QUESTION_COUNT = 8;
         let currentQuestions = [];
         let currentQuestionIndex = 0;
         let correctAnswers = 0;
@@ -593,7 +723,6 @@
         const quizScreen = document.getElementById('quizScreen');
         const resultScreen = document.getElementById('resultScreen');
         const startBtn = document.getElementById('startBtn');
-        const countBtns = document.querySelectorAll('.count-btn');
         const progressText = document.getElementById('progressText');
         const progressFill = document.getElementById('progressFill');
         const questionTerm = document.getElementById('questionTerm');
@@ -633,19 +762,6 @@
             }, 2000);
         }
 
-        // Event listeners for question count selection
-        countBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                countBtns.forEach(b => {
-                    b.classList.remove('selected');
-                    b.setAttribute('aria-checked', 'false');
-                });
-                btn.classList.add('selected');
-                btn.setAttribute('aria-checked', 'true');
-                questionCount = parseInt(btn.dataset.count);
-            });
-        });
-
         // Start game
         startBtn.addEventListener('click', () => {
             startGame();
@@ -657,8 +773,8 @@
             correctAnswers = 0;
             answered = false;
 
-            // Select random questions
-            currentQuestions = shuffleArray(QUESTION_POOL).slice(0, questionCount);
+            // Select random 8 questions from pool
+            currentQuestions = shuffleArray(QUESTION_POOL).slice(0, QUESTION_COUNT);
 
             // Show quiz screen
             showScreen(quizScreen);
@@ -669,21 +785,14 @@
             const question = currentQuestions[currentQuestionIndex];
 
             // Update progress
-            progressText.textContent = `${currentQuestionIndex + 1}/${questionCount}`;
-            progressFill.style.width = `${((currentQuestionIndex + 1) / questionCount) * 100}%`;
+            progressText.textContent = `${currentQuestionIndex + 1}/${QUESTION_COUNT}`;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / QUESTION_COUNT) * 100}%`;
 
             // Display term
             questionTerm.textContent = question.term;
 
-            // Generate options
-            const correctAnswer = question.meaning;
-            const wrongAnswers = shuffleArray(
-                QUESTION_POOL
-                    .filter(q => q.meaning !== correctAnswer)
-                    .map(q => q.meaning)
-            ).slice(0, 2);
-
-            const options = shuffleArray([correctAnswer, ...wrongAnswers]);
+            // Generate shuffled options from predefined correct/wrong answers
+            const options = shuffleArray([question.correct, question.wrong1, question.wrong2]);
 
             // Clear and populate options
             optionsContainer.innerHTML = '';
@@ -692,8 +801,8 @@
                 btn.className = 'option-btn';
                 btn.textContent = option;
                 btn.setAttribute('aria-label', `보기 ${index + 1}: ${option}`);
-                btn.dataset.correct = option === correctAnswer;
-                btn.addEventListener('click', () => selectOption(btn, option === correctAnswer));
+                btn.dataset.correct = option === question.correct;
+                btn.addEventListener('click', () => selectOption(btn, option === question.correct));
                 optionsContainer.appendChild(btn);
             });
 
@@ -726,13 +835,13 @@
 
             // Show next button
             nextBtn.classList.add('show');
-            nextBtn.textContent = currentQuestionIndex === questionCount - 1 ? '결과 보기' : '다음';
+            nextBtn.textContent = currentQuestionIndex === QUESTION_COUNT - 1 ? '결과 보기' : '다음';
         }
 
         // Next button
         nextBtn.addEventListener('click', () => {
             currentQuestionIndex++;
-            if (currentQuestionIndex >= questionCount) {
+            if (currentQuestionIndex >= QUESTION_COUNT) {
                 showResult();
             } else {
                 displayQuestion();
@@ -741,7 +850,7 @@
 
         function showResult() {
             // Calculate rate
-            const rate = (correctAnswers / questionCount) * 100;
+            const rate = (correctAnswers / QUESTION_COUNT) * 100;
 
             // Find tier
             const tier = RESULT_TIERS.find(t => rate >= t.minRate && rate <= t.maxRate) || RESULT_TIERS[RESULT_TIERS.length - 1];
@@ -762,7 +871,7 @@
 
             // Update result screen
             resultAge.textContent = age;
-            resultScore.textContent = `정답: ${correctAnswers}/${questionCount}`;
+            resultScore.textContent = `정답: ${correctAnswers}/${QUESTION_COUNT}`;
             resultEmoji.textContent = tier.emoji;
             resultTitle.textContent = tier.title;
             resultDescription.textContent = tier.description;
@@ -773,7 +882,7 @@
         // Share button
         shareBtn.addEventListener('click', async () => {
             const age = resultAge.textContent;
-            const shareText = `[신조어 나이 테스트 결과] 내 언어 나이는… ${age}세 😎 갓생 살기 참 힘들다 그치? 당신의 언어 점수는 ${correctAnswers}/${questionCount}점! 지금 바로 확인해봐! #신조어테스트 #언어나이 #MZ능력시험 #갓생러`;
+            const shareText = `[신조어 나이 테스트 결과] 내 언어 나이는… ${age}세 😎 갓생 살기 참 힘들다 그치? 당신의 언어 점수는 ${correctAnswers}/${QUESTION_COUNT}점! 지금 바로 확인해봐! #신조어테스트 #언어나이 #MZ능력시험 #갓생러`;
 
             if (navigator.share) {
                 try {
@@ -819,9 +928,9 @@
             document.body.removeChild(textarea);
         }
 
-        // Retry button
+        // Retry button - restart with new random questions
         retryBtn.addEventListener('click', () => {
-            showScreen(startScreen);
+            startGame();
         });
     </script>
 </body>
